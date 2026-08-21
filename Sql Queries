@@ -1,0 +1,245 @@
+:::SQL QUERIES:::
+------------------------------------------
+------------------------------------------
+(HOW TO CREATE A DATABASE)
+create database employees
+------------------------------------------
+(HOW TO CREATE A TABLE IN DATABASE)
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    city VARCHAR(50),
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+------------------------------------------
+(HOW TO INSERT DATA IN TALBE)
+insert into employees(employee_id, name, age, city, 
+department, salary) values
+(1,'rahi',21,'tokyo','cs',25000),
+(2,'Ali',22,'berlin','english',12000),
+(3,'Ahmad',23,'spain','urdu',23400);
+------------------------------------------
+(WHEN WE WANT TO SELECT ALL DATA WE USE)
+select * from employees
+------------------------------------------
+(FOR ADDING ANOTHER COLUMN)
+Alter table employees
+add column joining_date date ;
+------------------------------------------
+(FOR UPDATING ANY DATA)
+UPDATE employees
+SET joining_date = '2024-01-25'
+WHERE employee_id = 3;
+------------------------------------------
+(UPDATE ONE TIME IN 3 PLACES)
+update employees
+set gender = 'M'
+where employee_id in(1,2,3)
+update employees
+set gender = 'F'
+where employee_id = 4
+------------------------------------------
+(USE OF GROUP BY)
+select  gender, count(*) 
+ from employees
+ group by gender
+
+ select gender,count(*) as total_employees, 
+
+ select * from employees
+------------------------------------------
+(USE OF MODIFY)
+alter table employees
+modify column gender varchar(2)
+------------------------------------------
+(USE OF CHANGE)
+alter table employees
+change age emp_age int
+------------------------------------------
+(USE OF UPDATE)
+update employees
+set department = "cs" where employee_id = 4
+------------------------------------------------
+(USE OF AVERAGE FUNCTION)
+select department , AVG(salary) from employees
+group by department
+------------------------------------------------
+(QUERY INSIDE A QUERY)
+update employees
+set salary = 3400000 where employee_id = 4
+
+ select * from employees where salary >
+ (select avg(salary) from employees)
+------------------------------------------------
+(JOINS)
+select * from employees inner join
+ job on employees.employee_id = job.employee_id
+
+ select * from employees as a
+ right join job as b on a.employee_id = b.employee_id
+
+select * from employees as a left join job as b on a.employee_id =
+b.employee_id
+
+ UNION
+ select * from employees as t right join job as u
+ on t.employee_id = u.employee_id
+ -------------------------------------------------
+
+ (USE OF COMMON TABLE EXPRESSION CTE)
+ with employee_count as ( select department , count(*) as total_employee
+from employees group by department),
+high_deparmtent as ( select * from employee_count where total_employee>1
+)
+select * from high_deparmtent
+
+
+ WITH 
+employee_count AS (
+    SELECT 
+        department,
+        COUNT(*) AS total_employee
+    FROM employees
+    GROUP BY department
+),
+
+high_departments AS (
+    SELECT *
+    FROM employee_count
+    WHERE total_employee > 1
+)
+
+SELECT *
+FROM high_departments;
+
+with employee_count as ( select department,count(*) as total_employee
+from employees group by department),
+high_departments as ( select * from employee_count where total_employee>
+1)
+select * from high_departments
+
+with temp as ( select * from employees where salary > 5000)
+select * from temp
+
+------------------------------------------------------------------------
+(WINDOW FUNCTIONS)
+
+select name,salary,ROW_NUMBER() over ( order by salary desc)
+as rink from employees
+
+select name , salary , DENSE_RANK() over ( order by salary desc)
+as rink from employees
+
+update employees set salary = 25000 where employee_id = 3
+
+select name, salary , ROW_NUMBER() over (order by salary asc) as rink
+from employees
+
+select name , salary , department,RANK() over (partition by department order by
+salary desc) as rink from employees
+
+select name , salary , RANK() over (partition by department  order by
+salary desc) as rink from employees
+
+select name,salary,employee_id , LAG(salary) over (order by employee_id
+) as previous_employee_salary from employees
+
+select name,employee_id,salary , Lead(salary) over (order by employee_id)
+from employees
+
+with highest_salary as (select name,salary,ROW_NUMBER() over ( order by salary desc)
+as rn from employees)
+select * from highest_salary where rn > 1
+
+with highest_salary as ( select name,salary,ROW_NUMBER() over (order by 
+salary desc) as rn from employees)
+select * from highest_salary where rn = 1
+
+
+update income set salary = 2000 where name ="Ahad"
+create table income ( 
+    name varchar(10),
+    salary int
+);
+
+insert into income(name,salary) values ('Rani',1000),("Ahad",2000),
+("ahmad",3000),("inam",4000);
+alter table income add column hire_date date
+update income set hire_date = '2026-08-11'
+
+select * from income
+
+select name , salary ,
+case
+when salary < 1000 then 'low'
+when salary < 2000 then 'high'
+when salary < 3000 then 'very high'
+when salary < 8000 then 'expensive'
+when salary is null then 'Error'
+else 'less salary'
+end as levels
+from income
+
+
+
+
+select name , salary ,
+case 
+when salary is null then 'no bonus'
+when salary > 6000 then salary * 0.10
+else salary * 0.5
+end  as bonus 
+from income
+update income set salary = null where name = "Ahad"
+insert into income (name,salary)values("imad",7000)
+
+
+
+select name , salary , FIRST_VALUE(salary) over ( order by salary desc)
+as first_ever from employees limit 1
+
+
+
+select CURDATE()
+select NOW()
+select DATEDIFF('2026-08-21' , '2026-08-15') as days_difference
+select name , hire_date , DATEDIFF(CURDATE(), hire_date) as 
+days_worked from income
+
+
+SELECT 
+    name,
+    DATE_ADD(hire_date, INTERVAL 7 DAY) AS promotion
+FROM income;
+
+
+select EXTRACT(month from hire_date) as months_worked from income
+
+
+select * from order  where order_issue_date > DATE_SUB(CURDATE(),
+interval 7 days) from income 
+
+
+select name  from income
+update income 
+set name = upper(name)
+
+
+select name , lower(name ) from income  
+
+update income set name = lower( name)
+
+select name from income
+
+select name , replace (name, 'r' , 'R') as random from income
+ update income set name = replace (name,'r','R')
+
+
+ select * from income where LENGTH(name) <> 4
+
+
+ select hire_date from income
+ select name , lower(name) from income 
+
